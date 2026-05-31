@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Custom Badminton Keychain</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.page { max-width: 390px; margin: 0 auto; padding: 1.25rem 1rem 2rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+.brand { text-align: center; margin-bottom: 1.25rem; }
+.brand h1 { font-size: 18px; font-weight: 500; color: #111; }
+.brand p { font-size: 13px; color: #666; margin-top: 4px; }
+
+/* Preview Card */
+.preview-card { 
+  background: #fafafa; 
+  border-radius: 16px; 
+  padding: 1rem; 
+  display: flex; 
+  justify-content: center; 
+  align-items: flex-start; 
+  margin-bottom: 1.25rem; 
+  height: 480px; 
+  position: relative;
+  overflow: hidden;
+}
+
+/* Swing Layers */
+.swing-group {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  transform-origin: center 40px; 
+  pointer-events: none; 
+}
+
+/* Positioning for the uploaded images */
+.racket-layer { position: absolute; top: 75px; width: 300px; z-index: 1; transform: rotate(180deg);}
+.svg-overlay { position: absolute; top: 0; width: 140px; height: 325px; z-index: 3; }
+
+.section-label { font-size: 12px; font-weight: 600; color: #888; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+
+/* Name Section */
+.name-section { margin-bottom: 1.25rem; }
+.name-fields { display: flex; gap: 8px; }
+.name-fields input { flex: 1; font-size: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+
+/* Summary Section */
+.summary { display: flex; gap: 8px; margin-bottom: 1.25rem; }
+.chip { flex: 1; display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 9px 10px; min-width: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+.chip-dot { width: 18px; height: 18px; border-radius: 4px; flex-shrink: 0; border: 1px solid #e0e0e0; }
+.chip-lbl { font-size: 11px; color: #888; }
+.chip-val { font-size: 13px; font-weight: 500; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.divider { height: 1px; background: #eee; margin: 1.5rem 0; }
+
+/* Color Grid */
+.color-section { margin-bottom: 1.5rem; }
+.color-grid-container { background: #ffffff; border: 1px solid #e5e5e5; border-radius: 16px; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+.color-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.swatch { width: 100%; aspect-ratio: 1; border-radius: 12px; cursor: pointer; border: 2px solid transparent; transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s; }
+.swatch:hover { transform: scale(1.05); }
+.swatch.sel { border-color: #111; transform: scale(1.08); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+.order-btn { width: 100%; padding: 14px; background: #111; color: #fff; border: none; border-radius: 12px; font-size: 15px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; margin-top: 0.5rem; }
+.order-btn:hover { opacity: 0.85; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="brand">
+    <h1>Badminton Keychain</h1>
+    <p>Personalize your keychain</p>
+  </div>
+
+  <div class="preview-card" id="preview-card">
+    
+    <div id="racket-group" class="swing-group" style="z-index: 1;">
+      <img id="racket-image" class="racket-layer" src="images/BadmintonRacket-Pink.png" alt="Racket">
+    </div>
+
+    <div id="tag-group" class="swing-group" style="z-index: 2;">
+      <svg class="svg-overlay" viewBox="0 0 130 330" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="66" cy="0" rx="50" ry="55" stroke="#d5d5d5" stroke-width="8" fill="none" stroke-dasharray="1, 8" stroke-linecap="round"/>
+        <g transform="rotate(-130, 62, 52)">
+          <rect x="-15" y="20" width="80" height="40" rx="4" fill="#f8f8f8" stroke="#e0e0e0" stroke-width="1"/>
+          <circle cx="55" cy="50" r="5" fill="#d5d5d5"/>
+          <text id="tag-line1" x="25" y="43" text-anchor="middle" font-size="10" font-weight="600" fill="#999" font-family="DIN Condensed" letter-spacing="1">NAME</text>
+          <text id="tag-line2" x="25" y="49" text-anchor="middle" font-size="10" font-weight="600" fill="#999" font-family="DIN Condensed" letter-spacing="1"></text>
+        </g>
+      </svg>
+    </div>
+
+  </div>
+
+  <div class="name-section">
+    <div class="section-label">Name on tag</div>
+    <div class="name-fields">
+      <input type="text" id="line1" placeholder="Line 1" maxlength="10" oninput="updateNames()"/>
+      <input type="text" id="line2" placeholder="Line 2" maxlength="10" oninput="updateNames()"/>
+    </div>
+  </div>
+
+  <div class="summary">
+    <div class="chip">
+      <div class="chip-dot" id="color-dot" style="background:#FFB3ED;"></div>
+      <div style="min-width:0;">
+        <div class="chip-lbl">Racket Color</div>
+        <div class="chip-val" id="color-name">Pink</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="color-section">
+    <div class="section-label">Select Color</div>
+    <div class="color-grid-container">
+      <div class="color-grid" id="color-grid"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const palette = [
+  {name:"White",    hex:"#FFFFFF"},
+  {name:"Blue",     hex:"#86C5CA"},
+  {name:"Purple",   hex:"#DDBCE4"},
+  {name:"Pink",     hex:"#FFB3ED"},
+  {name:"Orange",   hex:"#EEA931"},
+  {name:"Black",    hex:"#1C1C1C"},
+  {name:"Brown",    hex:"#7D4D2E"},
+  {name:"Cream",    hex:"#F0DAC6"},
+  {name:"Gray",     hex:"#CBCBCB"},
+  {name:"Red",      hex:"#D62828"},
+  {name:"Yellow",   hex:"#F7F34A"},
+  {name:"Green",    hex:"#B2DA33"}
+];
+
+let selColor = palette[3]; // Default Pink
+
+function renderGrid(id, sel, cb) {
+  const el = document.getElementById(id);
+  el.innerHTML = "";
+  palette.forEach(c => {
+    const d = document.createElement("div");
+    d.className = "swatch" + (c.name === sel.name ? " sel" : "");
+    d.style.background = c.hex;
+    if (c.hex === "#FFFFFF") d.style.border = "1px solid #eee";
+    d.title = c.name;
+    d.onclick = () => cb(c);
+    el.appendChild(d);
+  });
+}
+
+// Single function to update the racket image
+function setColor(c) {
+  selColor = c;
+  
+  // Updates the image source based on the new file names
+  document.getElementById("racket-image").src = `images/BadmintonRacket-${c.name}.png`;
+  
+  // Update UI chip
+  document.getElementById("color-dot").style.background = c.hex;
+  document.getElementById("color-name").textContent = c.name;
+  
+  renderGrid("color-grid", selColor, setColor);
+}
+
+function updateNames() {
+  const l1 = document.getElementById("line1").value;
+  const l2 = document.getElementById("line2").value;
+  
+  localStorage.setItem('keychain_line1', l1);
+  localStorage.setItem('keychain_line2', l2);
+
+  const d1 = l1.trim() === "" ? "NAME" : l1;
+  const d2 = l2.trim() === "" ? "" : l2;
+  const t1 = document.getElementById("tag-line1");
+  const t2 = document.getElementById("tag-line2");
+  
+  const baseX = 25; 
+  const angle = 180; 
+  
+  t1.setAttribute("x", baseX);
+  t2.setAttribute("x", baseX);
+  
+  if (d2 === "") {
+    const y1 = 43;
+    t1.setAttribute("y", y1);
+    t1.setAttribute("transform", `rotate(${angle}, ${baseX}, ${y1})`);
+    t2.textContent = "";
+  } else {
+    const y1 = 45;
+    const y2 = 30;
+    t1.setAttribute("y", y1);
+    t1.setAttribute("transform", `rotate(${angle}, ${baseX}, ${y1})`);
+    t2.setAttribute("y", y2);
+    t2.setAttribute("transform", `rotate(${angle}, ${baseX}, ${y2})`);
+    t2.textContent = d2;
+    t2.setAttribute("font-size", d2.length > 7 ? "10" : "12");
+  }
+  
+  t1.textContent = d1;
+  t1.setAttribute("font-size", d1.length > 7 ? "10" : "12");
+}
+
+function placeOrder() {
+  const l1 = document.getElementById("line1").value.trim();
+  const l2 = document.getElementById("line2").value.trim();
+  const nameStr = l1 === "" ? "no name" : (l2 === "" ? l1 : l1 + " + " + l2);
+
+  alert("Order triggered!\n\nColor: " + selColor.name + "\nName Tag: " + nameStr);
+}
+
+// Initialize layout
+renderGrid("color-grid", selColor, setColor);
+setColor(selColor);
+updateNames();
+
+// ---------------------------------------------------
+// Animation: Realistic swing without the ball
+// ---------------------------------------------------
+const racketGroup = document.getElementById('racket-group');
+const tagGroup = document.getElementById('tag-group');
+
+racketGroup.style.transition = 'none';
+tagGroup.style.transition = 'none';
+
+let time = 0;
+function naturalSwing() {
+  const speed = 0.025; 
+  time += speed;
+  
+  const wave1 = Math.sin(time); 
+  const wave2 = Math.sin(time * 0.7) * 0.5; 
+  const organicSwing = wave1 + wave2; 
+
+  const racketAngle = organicSwing * 8;   
+  const tagAngle = organicSwing * 20;     
+
+  racketGroup.style.transform = `rotate(${racketAngle}deg)`;
+  tagGroup.style.transform = `rotate(${tagAngle}deg)`;
+
+  requestAnimationFrame(naturalSwing);
+}
+
+naturalSwing();
+
+window.addEventListener('DOMContentLoaded', () => {
+  const savedL1 = localStorage.getItem('keychain_line1');
+  const savedL2 = localStorage.getItem('keychain_line2');
+
+  if (savedL1 !== null) document.getElementById("line1").value = savedL1;
+  if (savedL2 !== null) document.getElementById("line2").value = savedL2;
+
+  updateNames();
+});
+
+// Preload the single image for all colors
+window.addEventListener('load', () => {
+  palette.forEach(c => {
+    const img = new Image();
+    img.src = `images/BadmintonRacket-${c.name}.png`;
+  });
+});
+
+</script>
+
+</body>
+</html>
